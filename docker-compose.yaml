@@ -1,0 +1,51 @@
+services:
+  chown:
+    image: busybox
+    platform: linux/amd64
+    user: root
+    volumes:
+      - valheim:/home/steam/valheim
+      - config:/home/steam/.config/unity3d/IronGate/Valheim
+    command:
+      - /bin/sh
+      - -c
+      - |
+        chown -R 1001:1001 /home/steam/.config/unity3d/IronGate/Valheim
+        chown -R 1001:1001 /home/steam/valheim
+  installupdate:
+    depends_on:
+      chown:
+        condition: service_completed_successfully
+    image: steamcmd
+    build:
+      context: .
+      dockerfile: steamcmd.Dockerfile
+    platform: linux/amd64
+    user: '1001'
+    volumes:
+      - valheim:/home/steam/valheim
+      - config:/home/steam/.config/unity3d/IronGate/Valheim
+    environment:
+      PUBLIC_TEST: false
+  valheim:
+    depends_on:
+      installupdate:
+        condition: service_completed_successfully
+    image: valheim
+    build:
+      context: .
+      dockerfile: valheim.Dockerfile
+    platform: linux/amd64
+    user: '1001'
+    volumes:
+      - valheim:/home/steam/valheim
+      - config:/home/steam/.config/unity3d/IronGate/Valheim
+    network_mode: host
+    environment:
+      SERVER_NAME: my_server
+      SERVER_PASS: secret
+      WORLD_NAME: Dedicated
+
+volumes:
+  config:
+  valheim:
