@@ -17,7 +17,7 @@ A secure, non-root container running a Valheim dedicated server
 ## Motive
 
 Built with security in mind:
-- non-root user for all images
+- non-root user by default
 - minimal packges installed on valheim image
 - separate image for installation and update that runs for a short period of time
   - steamcmd requires a lot of packages containing vulnerabilities
