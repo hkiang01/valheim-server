@@ -1,6 +1,6 @@
 # Valheim Server
 
-A secure, non-root docker compose service running a Valheim dedicated server
+A secure, non-root container running a Valheim dedicated server
 
 <img src="./valheim-shield.png" width="250" height="250" />
 
