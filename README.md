@@ -8,6 +8,8 @@ A secure, non-root docker compose service running a Valheim dedicated server
   - [Motive](#motive)
     - [Compared with lloesche/valheim-server](#compared-with-lloeschevalheim-server)
   - [Getting started](#getting-started)
+    - [Docker Compose](#docker-compose)
+    - [Kubernetes](#kubernetes)
   - [Customizing server options](#customizing-server-options)
   - [Known limitations](#known-limitations)
 
@@ -50,6 +52,8 @@ Note the `trivy image` results below:
 
 ## Getting started
 
+### Docker Compose
+
 If you're using the [Public Test Branch](https://steamcommunity.com/app/892970/discussions/0/3589961352692129408/), be sure to set the `PUBLIC_TEST` environment variable in the `installupdate` service to `true`.
 
 1. Spin up the service. Make sure you have [Docker](https://docs.docker.com/get-docker/) installed.
@@ -65,6 +69,16 @@ If you're using the [Public Test Branch](https://steamcommunity.com/app/892970/d
     docker compose cp <my_server.fwl> /home/steam/.config/unity3d/IronGate/Valheim/worlds_local/
     docker compose restart
     ```
+
+### Kubernetes
+
+These images are able to run under the `Restricted` [Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/).
+See [kubernetes.yaml](./kubernetes.yaml) as an example.
+
+1. Update the server config as desired (env vars in [kubernetes.yaml](./kubernetes.yaml), [start_server.sh](./start_server.sh), etc.)
+2. Build the images and push them to your choice of registry
+3. Change the `image`s in [kubernetes.yaml](./kubernetes.yaml) to align with your image registry
+4. `kubectl apply -f ./kubernetes.yaml`
 
 ## Customizing server options
 

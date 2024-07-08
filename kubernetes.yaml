@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: valheim
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/enforce-version: v1.30
+
+    # We are setting these to our _desired_ `enforce` level.
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/audit-version: v1.30
+    pod-security.kubernetes.io/warn: restricted
+    pod-security.kubernetes.io/warn-version: v1.30
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: valheim
+  namespace: valheim
+spec:
+  selector:
+    matchLabels:
+      app: valheim
+  template:
+    metadata:
+      labels:
+        app: valheim
+    spec:
+      securityContext:
+        runAsUser: 1001
+        runAsGroup: 1001
+        fsGroup: 1001
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: config
+        - name: valheim
+          persistentVolumeClaim:
+            claimName: valheim
+      initContainers:
+        - name: installupdate
+          image: localhost:32000/valheim-server:steamcmd
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          env:
+            - name: PUBLIC_TEST
+              value: "false"
+          volumeMounts:
+            - mountPath: /home/steam/.config/unity3d/IronGate/Valheim
+              name: config
+            - mountPath: /home/steam/valheim
+              name: valheim
+      containers:
+        - name: valheim
+          image: localhost:32000/valheim-server:valheim
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "500m"
+          volumeMounts:
+            - mountPath: /home/steam/.config/unity3d/IronGate/Valheim
+              name: config
+            - mountPath: /home/steam/valheim
+              name: valheim
+          ports:
+            - containerPort: 2456
+          env:
+            - name: WORLD_NAME
+              value: Dedicated
+            - name: SERVER_NAME
+              value: my_server
+            - name: SERVER_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: valheim
+                  key: server-pass
+---
+apiVersion: v1
+stringData:
+  server-pass: secret
+kind: Secret
+metadata:
+  name: valheim
+  namespace: valheim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: valheim
+  namespace: valheim
+spec:
+  type: NodePort
+  selector:
+    app: valheim
+  ports:
+    - protocol: UDP
+      port: 2456
+      targetPort: 2456
+      nodePort: 32456
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: config
+  namespace: valheim
+spec:
+  resources:
+    requests:
+      storage: 8Gi
+  accessModes:
+    - ReadWriteOnce
+  # storageClassName: microk8s-hostpath
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: valheim
+  namespace: valheim
+spec:
+  resources:
+    requests:
+      storage: 8Gi
+  accessModes:
+    - ReadWriteOnce
+  # storageClassName: microk8s-hostpath
