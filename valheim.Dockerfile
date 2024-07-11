@@ -23,11 +23,11 @@ WORKDIR /home/steam
 ENV HOME=/home/steam
 
 RUN mkdir -p /home/${USERNAME}/valheim
-COPY --chown=${USER_UID}:${USER_GID} start_server.sh ./
+COPY --chown=${USER_UID}:${USER_GID} start_server.bash ./
 
 WORKDIR /home/steam/valheim
 EXPOSE 2456
 ENTRYPOINT [ "/bin/bash", \
     "-c", \
-    "cp /home/steam/start_server.sh . && ./start_server.sh" \
+    "cp /home/steam/start_server.bash . && bash ./start_server.bash" \
     ]

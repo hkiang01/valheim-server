@@ -34,6 +34,6 @@ ENV HOME=/home/steam
 RUN steamcmd +quit
 
 RUN mkdir -p /home/${USERNAME}/valheim
-COPY --chown=${USER_UID}:${USER_GID} InstallUpdate.sh ./
+COPY --chown=${USER_UID}:${USER_GID} InstallUpdate.bash ./
 
-ENTRYPOINT ["./InstallUpdate.sh"]
+ENTRYPOINT ["bash", "./InstallUpdate.bash"]
