@@ -75,7 +75,7 @@ If you're using the [Public Test Branch](https://steamcommunity.com/app/892970/d
 These images are able to run under the `Restricted` [Pod Security Standard](https://kubernetes.io/docs/concepts/security/pod-security-standards/).
 See [kubernetes.yaml](./kubernetes.yaml) as an example.
 
-1. Update the server config as desired (env vars in [kubernetes.yaml](./kubernetes.yaml), [start_server.sh](./start_server.sh), etc.)
+1. Update the server config as desired (env vars in [kubernetes.yaml](./kubernetes.yaml), [start_server.bash](./start_server.bash), etc.)
 2. Build the images and push them to your choice of registry
 3. Change the `image`s in [kubernetes.yaml](./kubernetes.yaml) to align with your image registry
 4. `kubectl apply -f ./kubernetes.yaml`
