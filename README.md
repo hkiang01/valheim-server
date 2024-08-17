@@ -82,7 +82,7 @@ See [kubernetes.yaml](./kubernetes.yaml) as an example.
 
 ## Customizing server options
 
-Edit [start_server.sh](./start_server.sh) as you see fit.
+Edit [start_server.bash](./start_server.bash) as you see fit.
 See "List of Console Commands" at https://www.valheimgame.com/support/a-guide-to-dedicated-servers/ for more options.
 If needed, edit the entrypoint/cmd of the `valheim` service.
 
